@@ -1,0 +1,10 @@
+# Data folders
+data/
+intermediate/
+results/
+
+# Other big files that don't need to be committed
+other/
+
+# Python bytecode files
+*.pyc

@@ -30,7 +30,7 @@ def plot(contacts, predictions=None, output_prefix=None):
 			 	contact_map[j-1, i-1] = 3
 
 	plt.figure(figsize=(6, 6))
-	plt.pcolor(X, Y, contact_map, cmap=colors.ListedColormap(['1.0', '0.2', 'g', 'r']))
+	plt.pcolor(X, Y, contact_map, cmap=colors.ListedColormap(['1.0', '0.2', 'g', 'r']), vmin=0, vmax=3)
 	plt.xlim(0.5, L + 0.5)
 	plt.ylim(0.5, L + 0.5)
 
@@ -47,7 +47,7 @@ def plot_file(data_path, sequence_name, prediction_method=None, prediction_fract
 	predictions = None
 
 	if prediction_method:
-		predictions, prediction_scores = data_io.read_predicted_contacts(data_path, sequence_name, L, prediction_method, 5)
+		predictions, prediction_scores = data_io.read_predicted_contacts(data_path, prediction_method, sequence_name, L, 5)
 		predictions = predictions[:int(prediction_fraction * L)]
 
 	plot(contacts, predictions, output_prefix)

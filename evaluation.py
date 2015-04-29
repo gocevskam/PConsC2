@@ -6,20 +6,25 @@ import cPickle as pickle
 import itertools
 
 data_path = 'data/'
-alignments = ['blits' + str(i) + '.' for i in range(2, 6)] + [''] + ['jackhmmer' + str(i) + '.' for i in range(4, 7)]
-methods = ['psicov2', 'plmdca2']
-method_names = ['PSICOV', 'plmDCA']
-method_styles = ['k:', 'g--']
+intermediate_path = 'intermediate/'
+results_path = 'results/'
+
+alignments = [a + '_' + str(e) for a in ('hhblits', 'jackhmmer') for e in (1, -4, -10, -40)]
+grouped_methods = [
+	('psicov', (data_path, [a + '_' + 'psicov' for a in alignments], 'PSICOV', 'k:')),
+	('plmdca', (data_path, [a + '_' + 'plmdca' for a in alignments], 'plmDCA', 'g--')),
+	('pconsc', (results_path, ['pconsc'], 'PconsC', 'r-')),
+]
 
 def average_ppv(method):
 	top_predictions_fraction = 1.0
 
-	sequence_names = data_io.read_sequence_names('sequence_names')
+	sequence_names = data_io.read_sequence_names(data_path)
 	ppv = []
 	for sequence_name in sequence_names:
 		L = len(data_io.read_sequence(data_path, sequence_name))
 		contact_matrix = data_io.read_contacts_matrix(data_path, sequence_name, L)
-		predictions, prediction_scores = data_io.read_predicted_contacts(data_path, sequence_name, L, method, 5)
+		predictions, prediction_scores = data_io.read_predicted_contacts(data_path, method, sequence_name, L, 5)
 		predictions = predictions[:int(top_predictions_fraction * L)]
 		if len(predictions) > 0:
 			ppv.append(sum(1 for (i, j) in predictions if 0 < contact_matrix[i-1,j-1] <= 8) / float(len(predictions)))
@@ -32,9 +37,9 @@ def plot_ppv():
 	max_predictions_fraction = 1.5
 
 	def get_all_predictions():
-		sequence_names = data_io.read_sequence_names('sequence_names')
+		sequence_names = data_io.read_sequence_names(data_path)
 
-		all_predictions = dict((method, []) for method in methods)
+		all_predictions = dict((grouped_method, []) for (grouped_method, _) in grouped_methods)
 
 		for sequence_name in sequence_names:
 			print sequence_name
@@ -42,55 +47,55 @@ def plot_ppv():
 			L = len(data_io.read_sequence(data_path, sequence_name))
 			contact_matrix = data_io.read_contacts_matrix(data_path, sequence_name, L)
 
-			for method in methods:
-				for alignment in alignments:
-					predictions, prediction_scores = data_io.read_predicted_contacts(data_path, sequence_name, L, alignment + method, 5)
+			for (grouped_method, (base_path, methods, name, style)) in grouped_methods:
+				for method in methods:
+					predictions, prediction_scores = data_io.read_predicted_contacts(base_path, method, sequence_name, L, 5)
 					predictions = predictions[:int(max_predictions_fraction * L)]
-					all_predictions[method].extend((100 * float(k) / L, 0 < contact_matrix[i-1,j-1] <= 8) for (k, (i, j)) in enumerate(predictions))
+					all_predictions[grouped_method].extend((100 * float(k) / L, 0 < contact_matrix[i-1,j-1] <= 8) for (k, (i, j)) in enumerate(predictions))
 
 		return all_predictions
 
 	def accumulate_predictions(predictions):
 		ppv = {}
 
-		for method in methods:
-			predictions[method].sort()
+		for (grouped_method, _) in grouped_methods:
+			predictions[grouped_method].sort()
 
 			k = 0
 			n = 0
 			X = [0.0]
 			Y = [0.0]
-			for x, prediction_list in itertools.groupby(predictions[method], key=lambda x: x[0]):
+			for x, prediction_list in itertools.groupby(predictions[grouped_method], key=lambda x: x[0]):
 				prediction_list = list(prediction_list)
 				k += sum(1 for p in prediction_list if p[1])
 				n += len(prediction_list)
 				X.append(x)
 				Y.append(float(k) / n)
-			ppv[method] = (X, Y)
+			ppv[grouped_method] = (X, Y)
 
 		return ppv
 
 	def plot_ppv_curves(ppv):
-		for (method, name, style) in zip(methods, method_names, method_styles):
-			X, Y = ppv[method]
+		for (grouped_method, (base_path, methods, name, style)) in grouped_methods:
+			X, Y = ppv[grouped_method]
 			plt.plot(X, Y, style, label=name)
 		plt.legend()
 		plt.show()
 
 	try:
-		predictions = pickle.load(open('evaluation_predictions.pickled', 'rb'))
+		predictions = pickle.load(open(intermediate_path + 'evaluation_predictions.pickled', 'rb'))
 	except:
 		predictions = get_all_predictions()
-		pickle.dump(predictions, open('evaluation_predictions.pickled', 'wb'))
+		pickle.dump(predictions, open(intermediate_path + 'evaluation_predictions.pickled', 'wb'))
 
 	try:
-		ppv = pickle.load(open('evaluation_ppv.pickled', 'rb'))
+		ppv = pickle.load(open(intermediate_path + 'evaluation_ppv.pickled', 'rb'))
 	except:
 		ppv = accumulate_predictions(predictions)
-		pickle.dump(ppv, open('evaluation_ppv.pickled', 'wb'))
+		pickle.dump(ppv, open(intermediate_path + 'evaluation_ppv.pickled', 'wb'))
 
 	plot_ppv_curves(ppv)
 
 if __name__ == "__main__":
-	#average_ppv('blits2.psicov2')
+	#average_ppv('hhblits_1_psicov')
 	plot_ppv()

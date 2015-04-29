@@ -2,7 +2,6 @@ import os
 import shutil
 
 old_data_path = 'old_data/'
-contacts_path = 'native_contacts/'
 data_path = 'data/'
 
 alignment_extensions = ['blits' + str(i) + '.' for i in range(2, 6)] + [''] + ['jackhmmer' + str(i) + '.' for i in range(4, 7)]
@@ -26,10 +25,7 @@ for sequence_name in sequence_names:
 
 create_dir(data_path + 'contacts/')
 for sequence_name in sequence_names:
-	if contacts_path and os.path.exists(contacts_path):
-		shutil.copy(contacts_path + sequence_name + '_contacts.CB', data_path + 'contacts/' + sequence_name + '.CB')
-	else:
-		shutil.copy(old_data_path + sequence_name + '/contacts.CB', data_path + 'contacts/' + sequence_name + '.CB')
+	shutil.copy(old_data_path + sequence_name + '/contacts.CB', data_path + 'contacts/' + sequence_name + '.CB')
 
 for ae, an in zip(alignment_extensions, alignment_names):
 	for me, mn in zip(method_extensions, method_names):
