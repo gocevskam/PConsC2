@@ -1,7 +1,12 @@
 import itertools
+import os
 import re
+import tarfile
+import tempfile
 
 import numpy as np
+
+from sklearn.externals import joblib
 
 split_re = re.compile(r'[, \t]+')
 
@@ -53,3 +58,17 @@ def write_predictions(output_path, sequence_name, predicted):
 		predicted.sort(key=lambda (i, j, s): s, reverse=True)
 		for (i, j, s) in predicted:
 			f.write('{} {} {}\n'.format(i, j, s))
+
+def save_random_forest(random_forest, output_path, file_name):
+	for tree in random_forest.estimators_:
+		tree.indices_ = None
+
+	temp_dir = tempfile.gettempdir()
+	temp_files = joblib.dump(random_forest, temp_dir + '/random_forest.pkl')
+
+	with tarfile.open(output_path + file_name, 'w:gz') as tgz:
+		for temp_file in temp_files:
+			tgz.add(temp_file, arcname=os.path.basename(temp_file))
+
+	for temp_file in temp_files:
+		os.remove(temp_file)
