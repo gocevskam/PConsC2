@@ -1,0 +1,9 @@
+contacts.CB -> true contacts
+blits2 -> HHBlits e = 1
+blits3 -> HHBlits e = 1e-4
+blits4 -> HHBlits e = 1e-10
+blits5 -> HHBlits e = 1e-40
+           -> Jackhmmer e = 1
+jackhmmer4 -> Jackhmmer e = 1e-4
+jackhmmer5 -> Jackhmmer e = 1e-10
+jackhmmer6 -> Jackhmmer e = 1e-40
