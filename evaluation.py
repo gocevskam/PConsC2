@@ -1,3 +1,4 @@
+from constants import *
 import data_io
 
 import matplotlib.pyplot as plt
@@ -5,11 +6,6 @@ import matplotlib.pyplot as plt
 import cPickle as pickle
 import itertools
 
-data_path = 'data/'
-intermediate_path = 'intermediate/'
-results_path = 'results/'
-
-alignments = [a + '_' + str(e) for a in ('hhblits', 'jackhmmer') for e in (1, -4, -10, -40)]
 grouped_methods = [
 	('psicov', (data_path, [a + '_' + 'psicov' for a in alignments], 'PSICOV', 'k:')),
 	('plmdca', (data_path, [a + '_' + 'plmdca' for a in alignments], 'plmDCA', 'g--')),

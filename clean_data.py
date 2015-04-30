@@ -1,14 +1,13 @@
+from constants import *
+
 import os
 import shutil
 
 old_data_path = 'old_data/'
 data_path = 'data/'
 
-alignment_extensions = ['blits' + str(i) + '.' for i in range(2, 6)] + [''] + ['jackhmmer' + str(i) + '.' for i in range(4, 7)]
-alignment_names = [a + '_' + str(e) for a in ('hhblits', 'jackhmmer') for e in (1, -4, -10, -40)]
-
-method_extensions = ['psicov2', 'plmdca2']
-method_names = ['psicov', 'plmdca']
+old_alignments = ['blits' + str(i) + '.' for i in range(2, 6)] + [''] + ['jackhmmer' + str(i) + '.' for i in range(4, 7)]
+old_methods = ['psicov2', 'plmdca2']
 
 def create_dir(path):
 	if not os.path.exists(path):
@@ -27,8 +26,8 @@ create_dir(data_path + 'contacts/')
 for sequence_name in sequence_names:
 	shutil.copy(old_data_path + sequence_name + '/contacts.CB', data_path + 'contacts/' + sequence_name + '.CB')
 
-for ae, an in zip(alignment_extensions, alignment_names):
-	for me, mn in zip(method_extensions, method_names):
+for ae, an in zip(old_alignments, alignments):
+	for me, mn in zip(old_methods, methods):
 		subdir = an + '_' + mn + '/'
 		create_dir(data_path + subdir)
 		for sequence_name in sequence_names:

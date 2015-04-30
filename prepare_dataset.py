@@ -38,7 +38,7 @@ def prepare_dataset():
 
 			for (c, method) in enumerate(combined_methods):
 				r = pairs
-				predictions, prediction_scores = data_io.read_predicted_contacts(data_path, sequence_name, L, method, 5)
+				predictions, prediction_scores = data_io.read_predicted_contacts(data_path, sequence_name, L, method, min_separation)
 				for i in range(L):
 					for j in range(i + min_separation, L):
 						data[r, c] = prediction_scores[i, j]
