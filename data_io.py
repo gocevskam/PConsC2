@@ -15,7 +15,8 @@ def read_sequence_names(data_path):
 		return [l.strip() for l in f if l.strip()]
 
 def read_fold_sequence_names(data_path, k):
-	return read_sequence_names(data_path + 'folds/set' + str(k + 1))
+	with open(data_path + 'folds/set' + str(k + 1), 'r') as f:
+		return [l.strip() for l in f if l.strip()]
 
 def read_sequence(data_path, sequence_name):
 	with open(data_path + 'sequences/' + sequence_name + '.fa', 'r') as f:
