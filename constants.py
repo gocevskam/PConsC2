@@ -10,3 +10,5 @@ combined_methods = [a + '_' + m for a in alignments for m in methods]
 min_separation = 5
 
 folds = 5
+
+receptive_field = 3
