@@ -72,3 +72,16 @@ def save_random_forest(random_forest, output_path, file_name):
 
 	for temp_file in temp_files:
 		os.remove(temp_file)
+
+def load_random_forest(input_path, file_name):
+	temp_dir = tempfile.gettempdir()
+
+	with tarfile.open(input_path + file_name, 'r') as tgz:
+		tgz.extractall(temp_dir)
+
+		random_forest = joblib.load(temp_dir + '/random_forest.pkl')
+
+		for temp_file in tgz.getnames():
+			os.remove(temp_dir + '/' + temp_file)
+
+	return random_forest
