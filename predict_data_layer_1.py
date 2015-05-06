@@ -6,10 +6,10 @@ import numpy as np
 
 from sklearn.externals import joblib
 
-data = np.load(intermediate_path + 'dataset_data_layer_1.npy')
-folds = np.load(intermediate_path + 'dataset_folds.npy')
-
 k = 0
+
+data = np.load(intermediate_path + 'dataset_data_' + str(k) + '_layer_1.npy')
+folds = np.load(intermediate_path + 'dataset_folds.npy')
 
 forest = data_io.load_random_forest(intermediate_path, 'random_forest_' + str(k) + '_layer_1.pkl.tar.gz')
 scores = forest.predict_proba(data[folds == k])
