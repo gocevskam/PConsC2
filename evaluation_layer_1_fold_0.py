@@ -1,4 +1,4 @@
-from constants import *
+import constants as c
 import data_io
 
 import matplotlib.pyplot as plt
@@ -7,21 +7,21 @@ import cPickle as pickle
 import itertools
 
 grouped_methods = [
-	('psicov', (data_path, [a + '_' + 'psicov' for a in alignments], 'PSICOV', 'k:')),
-	('plmdca', (data_path, [a + '_' + 'plmdca' for a in alignments], 'plmDCA', 'g--')),
-	('pconsc', (results_path, ['pconsc'], 'PconsC', 'r-')),
-	('pconsc2_layer_1', (results_path, ['pconsc2_layer_1'], 'PconsC2 Layer 1', 'b-')),
+	('psicov', (c.data_path, [a + '_' + 'psicov' for a in c.alignments], 'PSICOV', 'k:')),
+	('plmdca', (c.data_path, [a + '_' + 'plmdca' for a in c.alignments], 'plmDCA', 'g--')),
+	('pconsc', (c.results_path, ['pconsc'], 'PconsC', 'r-')),
+	('pconsc2_layer_1', (c.results_path, ['pconsc2_layer_1'], 'PconsC2 Layer 1', 'b-')),
 ]
 
 def average_ppv(method):
 	top_predictions_fraction = 1.0
 
-	sequence_names = data_io.read_sequence_names(data_path)
+	sequence_names = data_io.read_sequence_names(c.data_path)
 	ppv = []
 	for sequence_name in sequence_names:
-		L = len(data_io.read_sequence(data_path, sequence_name))
-		contact_matrix = data_io.read_contacts_matrix(data_path, sequence_name, L)
-		predictions, prediction_scores = data_io.read_predicted_contacts(data_path, method, sequence_name, L, 5)
+		L = len(data_io.read_sequence(c.data_path, sequence_name))
+		contact_matrix = data_io.read_contacts_matrix(c.data_path, sequence_name, L)
+		predictions, prediction_scores = data_io.read_predicted_contacts(c.data_path, method, sequence_name, L, 5)
 		predictions = predictions[:int(top_predictions_fraction * L)]
 		if len(predictions) > 0:
 			ppv.append(sum(1 for (i, j) in predictions if 0 < contact_matrix[i-1,j-1] <= 8) / float(len(predictions)))
@@ -34,15 +34,15 @@ def plot_ppv():
 	max_predictions_fraction = 2.0
 
 	def get_all_predictions():
-		sequence_names = data_io.read_fold_sequence_names(data_path, 0)
+		sequence_names = data_io.read_fold_sequence_names(c.data_path, 0)
 
 		all_predictions = dict((grouped_method, []) for (grouped_method, _) in grouped_methods)
 
 		for sequence_name in sequence_names:
 			print sequence_name
 
-			L = len(data_io.read_sequence(data_path, sequence_name))
-			contact_matrix = data_io.read_contacts_matrix(data_path, sequence_name, L)
+			L = len(data_io.read_sequence(c.data_path, sequence_name))
+			contact_matrix = data_io.read_contacts_matrix(c.data_path, sequence_name, L)
 
 			for (grouped_method, (base_path, methods, name, style)) in grouped_methods:
 				for method in methods:
@@ -80,16 +80,16 @@ def plot_ppv():
 		plt.show()
 
 	try:
-		predictions = pickle.load(open(intermediate_path + 'evaluation_predictions.pickled', 'rb'))
+		predictions = pickle.load(open(c.intermediate_path + 'evaluation_predictions.pickled', 'rb'))
 	except:
 		predictions = get_all_predictions()
-		pickle.dump(predictions, open(intermediate_path + 'evaluation_predictions.pickled', 'wb'))
+		pickle.dump(predictions, open(c.intermediate_path + 'evaluation_predictions.pickled', 'wb'))
 
 	try:
-		ppv = pickle.load(open(intermediate_path + 'evaluation_ppv.pickled', 'rb'))
+		ppv = pickle.load(open(c.intermediate_path + 'evaluation_ppv.pickled', 'rb'))
 	except:
 		ppv = accumulate_predictions(predictions)
-		pickle.dump(ppv, open(intermediate_path + 'evaluation_ppv.pickled', 'wb'))
+		pickle.dump(ppv, open(c.intermediate_path + 'evaluation_ppv.pickled', 'wb'))
 
 	plot_ppv_curves(ppv)
 

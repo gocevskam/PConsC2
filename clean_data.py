@@ -1,4 +1,4 @@
-from constants import *
+import constants as c
 
 import os
 import shutil
@@ -26,8 +26,8 @@ create_dir(data_path + 'contacts/')
 for sequence_name in sequence_names:
 	shutil.copy(old_data_path + sequence_name + '/contacts.CB', data_path + 'contacts/' + sequence_name + '.CB')
 
-for ae, an in zip(old_alignments, alignments):
-	for me, mn in zip(old_methods, methods):
+for ae, an in zip(old_alignments, c.alignments):
+	for me, mn in zip(old_methods, c.methods):
 		subdir = an + '_' + mn + '/'
 		create_dir(data_path + subdir)
 		for sequence_name in sequence_names:
