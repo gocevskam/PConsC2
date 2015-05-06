@@ -20,8 +20,8 @@ folds = np.load(intermediate_path + 'dataset_folds.npy')
 
 k = 0
 with timer.Timer() as t:
-	random_forest_classifier = sklearn.ensemble.RandomForestClassifier(n_estimators=1, min_samples_leaf=500, n_jobs=n_jobs)
-	random_forest_classifier.fit(data, target[folds != k])
+	random_forest_classifier = sklearn.ensemble.RandomForestClassifier(n_estimators=100, min_samples_leaf=500, n_jobs=n_jobs)
+	random_forest_classifier.fit(data[folds != k], target[folds != k])
 
 	data_io.save_random_forest(random_forest_classifier, intermediate_path, 'random_forest_' + str(k) + '_layer_1.pkl.tar.gz')
 
