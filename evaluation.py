@@ -1,4 +1,4 @@
-import constants as c
+import constants
 import data_io
 
 import matplotlib.pyplot as plt
@@ -7,20 +7,20 @@ import cPickle as pickle
 import itertools
 
 grouped_methods = [
-	('psicov', (c.data_path, [a + '_' + 'psicov' for a in c.alignments], 'PSICOV', 'k:')),
-	('plmdca', (c.data_path, [a + '_' + 'plmdca' for a in c.alignments], 'plmDCA', 'g--')),
-	('pconsc', (c.results_path, ['pconsc'], 'PconsC', 'r-')),
+	('psicov', (constants.data_path, [a + '_' + 'psicov' for a in constants.alignments], 'PSICOV', 'k:')),
+	('plmdca', (constants.data_path, [a + '_' + 'plmdca' for a in constants.alignments], 'plmDCA', 'g--')),
+	('pconsc', (constants.results_path, ['pconsc'], 'PconsC', 'r-')),
 ]
 
 def average_ppv(method):
 	top_predictions_fraction = 1.0
 
-	sequence_names = data_io.read_sequence_names(c.data_path)
+	sequence_names = data_io.read_sequence_names(constants.data_path)
 	ppv = []
 	for sequence_name in sequence_names:
-		L = len(data_io.read_sequence(c.data_path, sequence_name))
-		contact_matrix = data_io.read_contacts_matrix(c.data_path, sequence_name, L)
-		predictions, prediction_scores = data_io.read_predicted_contacts(c.data_path, method, sequence_name, L, 5)
+		L = len(data_io.read_sequence(constants.data_path, sequence_name))
+		contact_matrix = data_io.read_contacts_matrix(constants.data_path, sequence_name, L)
+		predictions, prediction_scores = data_io.read_predicted_contacts(constants.data_path, method, sequence_name, L, 5)
 		predictions = predictions[:int(top_predictions_fraction * L)]
 		if len(predictions) > 0:
 			ppv.append(sum(1 for (i, j) in predictions if 0 < contact_matrix[i-1,j-1] <= 8) / float(len(predictions)))
@@ -33,15 +33,15 @@ def plot_ppv():
 	max_predictions_fraction = 1.5
 
 	def get_all_predictions():
-		sequence_names = data_io.read_sequence_names(c.data_path)
+		sequence_names = data_io.read_sequence_names(constants.data_path)
 
 		all_predictions = dict((grouped_method, []) for (grouped_method, _) in grouped_methods)
 
 		for sequence_name in sequence_names:
 			print sequence_name
 
-			L = len(data_io.read_sequence(c.data_path, sequence_name))
-			contact_matrix = data_io.read_contacts_matrix(c.data_path, sequence_name, L)
+			L = len(data_io.read_sequence(constants.data_path, sequence_name))
+			contact_matrix = data_io.read_contacts_matrix(constants.data_path, sequence_name, L)
 
 			for (grouped_method, (base_path, methods, name, style)) in grouped_methods:
 				for method in methods:
