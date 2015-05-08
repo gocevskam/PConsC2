@@ -1,0 +1,16 @@
+#!/bin/bash -l
+
+#PBS -l nodes=1:ppn=8
+#PBS -l walltime=0:30:00
+#PBS -l mem=4gb
+#PBS -o pconsc.out
+#PBS -e pconsc.err
+#PBS -N PConsC
+#PBS -t 0-4
+
+module load ScientificPython/2.8.1-intel-2014b-Python-2.7.8
+
+mkdir -p $WORKDIR/pconsc/
+mkdir -p $HOME/pconsc/results/pconsc/
+
+python $HOME/pconsc/PConsC2/pconsc.py --data $HOME/pconsc/data/ --intermediate $WORKDIR/pconsc/ --results $HOME/pconsc/results/ --cores 8 --fold ${PBS_ARRAYID}

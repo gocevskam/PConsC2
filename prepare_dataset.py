@@ -17,6 +17,7 @@ def prepare_dataset():
 
 	data = np.zeros((total_pairs, len(c.combined_methods)))
 	target = np.zeros(total_pairs, dtype=np.int8)
+	folds =  np.array([k for (k, n) in enumerate(fold_lengths) for j in range(n)])
 
 	pairs = 0
 	for k in range(c.number_of_folds):
@@ -37,9 +38,11 @@ def prepare_dataset():
 						r += 1
 			pairs = r
 
-	np.save(c.intermediate_path + 'dataset_data.npy', data)
-	np.save(c.intermediate_path +'dataset_target.npy', target)
-	np.save(c.intermediate_path + 'dataset_folds.npy', np.array([k for (k, n) in enumerate(fold_lengths) for j in range(n)]))
+	return data, target, folds
 
-if __name__ == "__main__":
-	prepare_dataset()
+if __name__ == '__main__':
+	data, target, folds = prepare_dataset()
+
+	np.save(c.intermediate_path + 'dataset_data.npy', data)
+	np.save(c.intermediate_path + 'dataset_target.npy', target)
+	np.save(c.intermediate_path + 'dataset_folds.npy', folds)

@@ -78,18 +78,8 @@ def plot_ppv():
 		plt.legend()
 		plt.show()
 
-	try:
-		predictions = pickle.load(open(c.intermediate_path + 'evaluation_predictions.pickled', 'rb'))
-	except:
-		predictions = get_all_predictions()
-		pickle.dump(predictions, open(c.intermediate_path + 'evaluation_predictions.pickled', 'wb'))
-
-	try:
-		ppv = pickle.load(open(c.intermediate_path + 'evaluation_ppv.pickled', 'rb'))
-	except:
-		ppv = accumulate_predictions(predictions)
-		pickle.dump(ppv, open(c.intermediate_path + 'evaluation_ppv.pickled', 'wb'))
-
+	predictions = get_all_predictions()
+	ppv = accumulate_predictions(predictions)
 	plot_ppv_curves(ppv)
 
 if __name__ == "__main__":
