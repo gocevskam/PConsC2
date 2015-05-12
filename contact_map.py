@@ -14,10 +14,12 @@ def plot(contacts, predictions=None, output_prefix=None):
 	plt.pcolor(X, Y, contacts, vmin=0, vmax=32)
 	plt.xlim(0.5, L + 0.5)
 	plt.ylim(0.5, L + 0.5)
+	plt.xlabel('Residue number')
+	plt.ylabel('Residue number')
 	plt.colorbar()
 
 	if output_prefix:
-		plt.savefig(output_prefix + "_dist.png")
+		plt.savefig(output_prefix + '_dist.png')
 
 	contact_map = np.zeros_like(contacts) + np.logical_and(0 < contacts, contacts <= 8)
 	if predictions:
@@ -33,9 +35,11 @@ def plot(contacts, predictions=None, output_prefix=None):
 	plt.pcolor(X, Y, contact_map, cmap=colors.ListedColormap(['1.0', '0.2', 'g', 'r']), vmin=0, vmax=3)
 	plt.xlim(0.5, L + 0.5)
 	plt.ylim(0.5, L + 0.5)
+	plt.xlabel('Residue number')
+	plt.ylabel('Residue number')
 
 	if output_prefix:
-		plt.savefig(output_prefix + ".png")
+		plt.savefig(output_prefix + '.png')
 
 	if not output_prefix:
 		plt.show()
