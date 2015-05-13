@@ -4,7 +4,7 @@ import data_io
 import numpy as np
 from sklearn.externals import joblib
 
-def predict_data(k, data, folds, random_forest):
+def predict_data(k, data, folds, random_forest, results_folder):
 	scores = random_forest.predict_proba(data[folds == k])[:, np.where(random_forest.classes_ == 1)[0][0]]
 
 	r = 0
@@ -16,7 +16,7 @@ def predict_data(k, data, folds, random_forest):
 			for j in range(i + constants.min_separation, L):
 				predicted.append((i+1, j+1, scores[r]))
 				r += 1
-		data_io.write_predictions(constants.results_path + 'pconsc/', sequence_name, predicted)
+		data_io.write_predictions(constants.results_path + results_folder, sequence_name, predicted)
 
 if __name__ == '__main__':
 	data = np.load(constants.intermediate_path + 'dataset_data.npy')

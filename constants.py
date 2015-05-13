@@ -12,3 +12,5 @@ number_of_folds = 5
 
 min_separation = 5
 receptive_field = 3
+
+num_of_layers = 5
