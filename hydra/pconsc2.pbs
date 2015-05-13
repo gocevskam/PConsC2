@@ -1,0 +1,23 @@
+#!/bin/bash -l
+
+#PBS -l nodes=1:ppn=4
+#PBS -l walltime=1:30:00
+#PBS -l mem=8gb
+
+#PBS -o pconsc.out
+#PBS -e pconsc.err
+#PBS -N PConsC
+
+#PBS -t 1-5
+
+#PBS -m abe
+
+module load ScientificPython/2.8.1-intel-2014b-Python-2.7.8
+
+mkdir -p $WORKDIR/pconsc2/
+for i in {0..5}
+do
+	mkdir -p $HOME/pconsc/results/pconsc2_layer_$i/
+done
+
+python $HOME/pconsc/PConsC2/pconsc2.py --data $HOME/pconsc/data/ --intermediate $WORKDIR/pconsc2/ --results $HOME/pconsc/results/ --cores 4 --fold ${PBS_ARRAYID}
