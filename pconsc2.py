@@ -3,6 +3,7 @@ import data_io
 import fit_data
 import predict_data
 import prepare_dataset
+import next_layer_dataset
 
 import argparse
 import os.path
