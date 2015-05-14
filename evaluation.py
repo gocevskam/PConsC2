@@ -10,6 +10,12 @@ grouped_methods = [
 	('psicov', (constants.data_path, [a + '_' + 'psicov' for a in constants.alignments], 'PSICOV', 'k:')),
 	('plmdca', (constants.data_path, [a + '_' + 'plmdca' for a in constants.alignments], 'plmDCA', 'g--')),
 	('pconsc', (constants.results_path, ['pconsc'], 'PconsC', 'r-')),
+	('pconsc2_layer_0', (constants.results_path, ['pconsc2_layer_0'], 'PconsC2 Layer 0', 'c--')),
+	('pconsc2_layer_1', (constants.results_path, ['pconsc2_layer_1'], 'PconsC2 Layer 1', 'm--')),
+	('pconsc2_layer_2', (constants.results_path, ['pconsc2_layer_2'], 'PconsC2 Layer 2', 'b--')),
+	('pconsc2_layer_3', (constants.results_path, ['pconsc2_layer_3'], 'PconsC2 Layer 3', 'c-')),
+	('pconsc2_layer_4', (constants.results_path, ['pconsc2_layer_4'], 'PconsC2 Layer 4', 'm-')),
+	('pconsc2_layer_5', (constants.results_path, ['pconsc2_layer_5'], 'PconsC2 Layer 5', 'b-')),
 ]
 
 def average_ppv(method):
@@ -21,9 +27,10 @@ def average_ppv(method):
 		L = len(data_io.read_sequence(constants.data_path, sequence_name))
 		contact_matrix = data_io.read_contacts_matrix(constants.data_path, sequence_name, L)
 		predictions, prediction_scores = data_io.read_predicted_contacts(constants.data_path, method, sequence_name, L, 5)
+		predictions = [(i, j) for (i, j) in predictions if contact_matrix[i-1,j-1] > 0]
 		predictions = predictions[:int(top_predictions_fraction * L)]
 		if len(predictions) > 0:
-			ppv.append(sum(1 for (i, j) in predictions if 0 < contact_matrix[i-1,j-1] <= 8) / float(len(predictions)))
+			ppv.append(sum(1 for (i, j) in predictions if contact_matrix[i-1,j-1] <= 8) / float(len(predictions)))
 			print sequence_name, L, ppv[-1]
 		else:
 			print sequence_name, L, "No predictions"
@@ -46,8 +53,9 @@ def plot_ppv():
 			for (grouped_method, (base_path, methods, name, style)) in grouped_methods:
 				for method in methods:
 					predictions, prediction_scores = data_io.read_predicted_contacts(base_path, method, sequence_name, L, 5)
+					predictions = [(i, j) for (i, j) in predictions if contact_matrix[i-1,j-1] > 0]
 					predictions = predictions[:int(max_predictions_fraction * L)]
-					all_predictions[grouped_method].extend((100 * float(k) / L, 0 < contact_matrix[i-1,j-1] <= 8) for (k, (i, j)) in enumerate(predictions))
+					all_predictions[grouped_method].extend((100 * float(k) / L, contact_matrix[i-1,j-1] <= 8) for (k, (i, j)) in enumerate(predictions))
 
 		return all_predictions
 

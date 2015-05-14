@@ -16,7 +16,7 @@ def run_pconsc(fold):
 	forest = fit_data.fit_data(k, data, target, folds)
 	data_io.save_random_forest(forest, constants.intermediate_path, 'pconsc_random_forest_' + str(k) + '.pkl.tar.gz')
 	print 'Predicting test data...'
-	predict_data.predict_data(k, data, folds, forest)
+	predict_data.predict_data(k, data, folds, forest, 'pconsc/')
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='Run PConsC')

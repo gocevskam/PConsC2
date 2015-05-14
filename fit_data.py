@@ -7,7 +7,7 @@ import sklearn.ensemble
 
 def fit_data(k, data, target, folds):
 	random_forest_classifier = sklearn.ensemble.RandomForestClassifier(n_estimators=100, min_samples_leaf=500, n_jobs=constants.number_of_cores)
-	random_forest_classifier.fit(data[folds != k], target[folds != k])
+	random_forest_classifier.fit(data[(target != -1) & (folds != k)], target[(target != -1) & (folds != k)])
 	return random_forest_classifier
 
 if __name__ == '__main__':

@@ -32,7 +32,7 @@ def prepare_dataset():
 					for j in range(i + constants.min_separation, L):
 						data[r, c] = prediction_scores[i, j]
 						if c == 0:
-							target[r] = 0 < contact_matrix[i, j] <= 8
+							target[r] = contact_matrix[i, j] <= 8 if contact_matrix[i, j] > 0 else -1
 						r += 1
 			pairs = r
 
