@@ -3,6 +3,7 @@
 #PBS -l nodes=1:ppn=4
 #PBS -l walltime=0:20:00
 #PBS -l mem=4gb
+#PBS -l file=1gb
 
 #PBS -o pconsc.out
 #PBS -e pconsc.err
