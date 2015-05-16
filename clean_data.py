@@ -32,3 +32,12 @@ for ae, an in zip(old_alignments, constants.alignments):
 		create_dir(data_path + subdir)
 		for sequence_name in sequence_names:
 			shutil.copy(old_data_path + sequence_name + '/sequence.fa.' + ae + me, data_path + subdir + sequence_name + '.pred')
+
+create_dir(data_path + 'alignments/')
+for sequence_name in sequence_names:
+	shutil.copy(old_data_path + sequence_name + '/sequence.fa.blits3.trimmed', data_path + 'alignments/' + sequence_name + '.fa')
+
+create_dir(data_path + 'psipred/')
+for sequence_name in sequence_names:
+	with open(old_data_path + sequence_name + '/ss.blits2', 'r') as f, open(data_path + 'psipred/' + sequence_name + '.pred', 'w') as g:
+		g.write('\n'.join(l.strip() for (i, l) in zip(range(4), f)))

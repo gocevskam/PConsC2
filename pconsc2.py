@@ -13,7 +13,7 @@ def run_pconsc2(fold):
 	k = fold - 1
 	print 'Preparing data...'
 	base_data, target, folds = prepare_dataset.prepare_dataset()
-	for i in range(constants.num_of_layers + 1):
+	for i in range(constants.number_of_layers + 1):
 		if i == 0:
 			data = base_data
 		else: 

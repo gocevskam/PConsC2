@@ -22,7 +22,7 @@ def read_sequence(data_path, sequence_name):
 	with open(data_path + 'sequences/' + sequence_name + '.fa', 'r') as f:
 		for line in f:
 			line = line.strip()
-			if not line.startswith('>'):
+			if line and not line.startswith('>'):
 				return line
 
 def read_residue_pairs(file_name, separator):
@@ -53,6 +53,40 @@ def read_predicted_contacts(data_path, method, sequence_name, L, separation):
 			scores[j-1, i-1] = s
 	predicted.sort(key=lambda (i, j): scores[i-1, j-1], reverse=True)
 	return predicted, scores
+
+def read_alignment(data_path, sequence_name):
+	alignment = []
+	with open(data_path + 'alignments/' + sequence_name + '.fa', 'r') as f:
+		for line in f:
+			line = line.strip()
+			if line and not line.startswith('>'):
+				alignment.append(line)
+	return alignment
+
+def read_psipred(data_path, sequence_name):
+	secondary_structure = None
+	confidence = None
+	with open(data_path + 'psipred/' + sequence_name + '.pred', 'r') as f:
+		for line in f:
+			line = line.strip()
+			if line and not line.startswith('>'):
+				if all(c in 'CEH' for c in line):
+					secondary_structure = line
+				elif line.isdigit():
+					confidence = map(int, line)
+	return secondary_structure, confidence
+
+def read_netsurfp(data_path, sequence_name):
+	rsa = []
+	secondary_structure = []
+	with open(data_path + 'netsurfp/' + sequence_name + '.pred', 'r') as f:
+		for line in f:
+			line = line.strip()
+			if line and not line.startswith('#'):
+				splitted = line.split()
+				rsa.append(tuple(map(float, (splitted[4], splitted[6]))))
+				secondary_structure.append(tuple(map(float, splitted[7:10])))
+	return rsa, secondary_structure
 
 def write_predictions(output_path, sequence_name, predicted):
 	with open(output_path + sequence_name + '.pred', 'w') as f:

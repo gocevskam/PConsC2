@@ -3,6 +3,63 @@ import data_io
 
 import numpy as np
 
+import collections
+import math
+
+number_of_extra_features = 1 + 2 * (len(constants.amino_acids) + 1) + 2 * (2 * constants.extra_features_window + 1) * 2 + 2 * (2 * constants.extra_features_window + 1) * 5
+
+def add_extra_features(data, sequence_name, L, r):
+	alignment = data_io.read_alignment(constants.data_path, sequence_name)
+	frequencies = [collections.defaultdict(int) for i in range(L)]
+	for sequence in alignment:
+		for i in range(L):
+			frequencies[i][sequence[i]] += 1
+
+	psipred_ss, psipred_conf = data_io.read_psipred(constants.data_path, sequence_name)
+	netsurfp_rsa, netsurfp_ss = data_io.read_netsurfp(constants.data_path, sequence_name)
+
+	for i in range(L):
+		for j in range(i + constants.min_separation, L):
+			c = len(constants.combined_methods)
+			
+			# Separation
+			data[r, c] = j - i
+			c += 1
+
+			# PSSM
+			for k in (i, j):
+				for (amino_acid, background_frequency) in zip(constants.amino_acids, constants.background_frequencies):
+					data[r, c] = math.log((frequencies[k][amino_acid] if amino_acid in frequencies[k] else 0.01) / (len(alignment) * background_frequency))
+					c += 1
+				data[r, c] = math.log(frequencies[k]['-'] if '-' in frequencies[k] else 0.01)
+				c += 1
+
+			# SS
+			for k in (i, j):
+				for l in range(k - constants.extra_features_window, k + constants.extra_features_window + 1):
+					if 0 <= l < L:
+						ss = constants.secondary_structures.index(psipred_ss[l])
+						conf = psipred_conf[l]
+					else:
+						ss = -1
+						conf = 0
+					data[r, c:c+2] = (ss, conf)
+					c += 2
+
+			# RSA
+			for k in (i, j):
+				for l in range(k - constants.extra_features_window, k + constants.extra_features_window + 1):
+					if 0 <= l < L:
+						rsa = netsurfp_rsa[l]
+						ss = netsurfp_ss[l]
+					else:
+						rsa = (0, -5)
+						ss = (0, 0, 0)
+					data[r, c:c+5] = rsa + ss
+					c += 5
+
+			r += 1
+
 def prepare_dataset():
 	total_pairs = 0
 	fold_lengths = []
@@ -15,7 +72,7 @@ def prepare_dataset():
 		total_pairs += fold_pairs
 		fold_lengths.append(fold_pairs)
 
-	data = np.zeros((total_pairs, len(constants.combined_methods)))
+	data = np.zeros((total_pairs, len(constants.combined_methods) + (number_of_extra_features if constants.extra_features else 0)))
 	target = np.zeros(total_pairs, dtype=np.int8)
 	folds =  np.array([k for (k, n) in enumerate(fold_lengths) for j in range(n)])
 
@@ -34,6 +91,10 @@ def prepare_dataset():
 						if c == 0:
 							target[r] = contact_matrix[i, j] <= 8 if contact_matrix[i, j] > 0 else -1
 						r += 1
+
+			if constants.extra_features:
+				add_extra_features(data, sequence_name, L, pairs)
+
 			pairs = r
 
 	return data, target, folds
