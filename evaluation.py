@@ -10,12 +10,12 @@ grouped_methods = [
 	('psicov', (constants.data_path, [a + '_' + 'psicov' for a in constants.alignments], 'PSICOV', 'k:')),
 	('plmdca', (constants.data_path, [a + '_' + 'plmdca' for a in constants.alignments], 'plmDCA', 'g--')),
 	('pconsc', (constants.results_path, ['pconsc'], 'PconsC', 'r-')),
-	('pconsc2_layer_0', (constants.results_path, ['pconsc2_layer_0'], 'PconsC2 Layer 0', 'c--')),
-	('pconsc2_layer_1', (constants.results_path, ['pconsc2_layer_1'], 'PconsC2 Layer 1', 'm--')),
-	('pconsc2_layer_2', (constants.results_path, ['pconsc2_layer_2'], 'PconsC2 Layer 2', 'b--')),
-	('pconsc2_layer_3', (constants.results_path, ['pconsc2_layer_3'], 'PconsC2 Layer 3', 'c-')),
-	('pconsc2_layer_4', (constants.results_path, ['pconsc2_layer_4'], 'PconsC2 Layer 4', 'm-')),
-	('pconsc2_layer_5', (constants.results_path, ['pconsc2_layer_5'], 'PconsC2 Layer 5', 'b-')),
+	('pconsc2_layer_0', (constants.results_path, ['pconsc2_layer_0'], 'PconsC2 Layer 0', '#CCE0FF')),
+	('pconsc2_layer_1', (constants.results_path, ['pconsc2_layer_1'], 'PconsC2 Layer 1', '#99C2FF')),
+	('pconsc2_layer_2', (constants.results_path, ['pconsc2_layer_2'], 'PconsC2 Layer 2', '#80B2FF')),
+	('pconsc2_layer_3', (constants.results_path, ['pconsc2_layer_3'], 'PconsC2 Layer 3', '#66A3FF')),
+	('pconsc2_layer_4', (constants.results_path, ['pconsc2_layer_4'], 'PconsC2 Layer 4', '#3385FF')),
+	('pconsc2_layer_5', (constants.results_path, ['pconsc2_layer_5'], 'PconsC2 Layer 5', '#005CE6')),
 ]
 
 def average_ppv(method):
