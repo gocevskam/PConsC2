@@ -55,7 +55,7 @@ def plot_ppv():
 					predictions, prediction_scores = data_io.read_predicted_contacts(base_path, method, sequence_name, L, 5)
 					predictions = [(i, j) for (i, j) in predictions if contact_matrix[i-1,j-1] > 0]
 					predictions = predictions[:int(max_predictions_fraction * L)]
-					all_predictions[grouped_method].extend((100 * float(k) / L, contact_matrix[i-1,j-1] <= 8) for (k, (i, j)) in enumerate(predictions))
+					all_predictions[grouped_method].extend((100 * float(k) / L, contact_matrix[i-1,j-1] <= 8) for (k, (i, j)) in enumerate(predictions, 1))
 
 		return all_predictions
 
@@ -67,14 +67,15 @@ def plot_ppv():
 
 			k = 0
 			n = 0
-			X = [0.0]
-			Y = [0.0]
+			X = []
+			Y = []
 			for x, prediction_list in itertools.groupby(predictions[grouped_method], key=lambda x: x[0]):
 				prediction_list = list(prediction_list)
 				k += sum(1 for p in prediction_list if p[1])
 				n += len(prediction_list)
-				X.append(x)
-				Y.append(float(k) / n)
+				if x >= 1:
+					X.append(x)
+					Y.append(float(k) / n)
 			ppv[grouped_method] = (X, Y)
 
 		return ppv
