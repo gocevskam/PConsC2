@@ -46,6 +46,7 @@ def read_contacts_matrix(data_path, sequence_name, L):
 def read_predicted_contacts(data_path, method, sequence_name, L, separation):
 	predicted = []
 	scores = np.zeros((L, L))
+	scores.fill(-10)
 	for (i, j, s) in read_residue_pairs(data_path + method + '/' + sequence_name + '.pred', ',' if 'plmdca' in method else ' '):
 		if abs(j - i) >= separation:
 			predicted.append((i, j))
