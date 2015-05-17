@@ -7,8 +7,9 @@ import collections
 import math
 
 number_of_extra_features = 1 + 2 * (len(constants.amino_acids) + 1) + 2 * (2 * constants.extra_features_window + 1) * 2 + 2 * (2 * constants.extra_features_window + 1) * 5
+number_of_extra_same_ss_features = 3
 
-def add_extra_features(data, sequence_name, L, r):
+def add_extra_features(data, sequence_name, L, row, column):
 	alignment = data_io.read_alignment(constants.data_path, sequence_name)
 	frequencies = [collections.defaultdict(int) for i in range(L)]
 	for sequence in alignment:
@@ -18,9 +19,10 @@ def add_extra_features(data, sequence_name, L, r):
 	psipred_ss, psipred_conf = data_io.read_psipred(constants.data_path, sequence_name)
 	netsurfp_rsa, netsurfp_ss = data_io.read_netsurfp(constants.data_path, sequence_name)
 
+	r = row
 	for i in range(L):
 		for j in range(i + constants.min_separation, L):
-			c = len(constants.combined_methods)
+			c = column
 			
 			# Separation
 			data[r, c] = j - i
@@ -60,6 +62,26 @@ def add_extra_features(data, sequence_name, L, r):
 
 			r += 1
 
+def add_extra_same_ss_features(data, sequence_name, L, row, column):
+	psipred_ss, psipred_conf = data_io.read_psipred(constants.data_path, sequence_name)
+	
+	r = row
+	for i in range(L):
+		for j in range(i + constants.min_separation, L):
+			c = column
+			
+			# Separation
+			data[r, c] = j - i
+			c += 1
+
+			# Same SS element
+			same_ss = psipred_ss[i] == psipred_ss[j] and psipred_ss[i] != 'C' and all(ss == psipred_ss[i] for ss in psipred_ss[i+1:j+1])
+			same_ss_conf = min(psipred_conf[i:j+1]) if same_ss else 0
+			data[r, c:c+2] = (same_ss, same_ss_conf)
+			c += 2
+
+		r += 1
+
 def prepare_dataset():
 	total_pairs = 0
 	fold_lengths = []
@@ -72,7 +94,7 @@ def prepare_dataset():
 		total_pairs += fold_pairs
 		fold_lengths.append(fold_pairs)
 
-	data = np.zeros((total_pairs, len(constants.combined_methods) + (number_of_extra_features if constants.extra_features else 0)))
+	data = np.zeros((total_pairs, len(constants.combined_methods) + constants.extra_features * number_of_extra_features + constants.extra_same_ss_features * number_of_extra_same_ss_features))
 	target = np.zeros(total_pairs, dtype=np.int8)
 	folds =  np.array([k for (k, n) in enumerate(fold_lengths) for j in range(n)])
 
@@ -93,7 +115,10 @@ def prepare_dataset():
 						r += 1
 
 			if constants.extra_features:
-				add_extra_features(data, sequence_name, L, pairs)
+				add_extra_features(data, sequence_name, L, pairs, len(constants.combined_methods))
+
+			if constants.extra_same_ss_features:
+				add_extra_same_ss_features(data, sequence_name, L, pairs, len(constants.combined_methods) + constants.extra_features * number_of_extra_features)
 
 			pairs = r
 

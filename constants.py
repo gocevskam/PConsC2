@@ -17,6 +17,7 @@ number_of_folds = 5
 min_separation = 5
 extra_features = True
 extra_features_window = 4
+extra_same_ss_features = True
 
 receptive_field = 5
 number_of_layers = 5
