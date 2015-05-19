@@ -1,9 +1,9 @@
 #!/bin/bash -l
 
 #PBS -l nodes=1:ppn=4
-#PBS -l walltime=0:20:00
-#PBS -l mem=4gb
-#PBS -l file=1gb
+#PBS -l walltime=0:40:00
+#PBS -l mem=16gb
+#PBS -l file=4gb
 
 #PBS -o pconsc.out
 #PBS -e pconsc.err
