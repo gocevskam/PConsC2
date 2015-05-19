@@ -94,7 +94,7 @@ def prepare_dataset():
 		total_pairs += fold_pairs
 		fold_lengths.append(fold_pairs)
 
-	data = np.zeros((total_pairs, len(constants.combined_methods) + constants.extra_features * number_of_extra_features + constants.extra_same_ss_features * number_of_extra_same_ss_features))
+	data = np.zeros((total_pairs, len(constants.combined_methods) * (9 if constants.surrounding_prediction_scores else 1) + constants.extra_features * number_of_extra_features + constants.extra_same_ss_features * number_of_extra_same_ss_features))
 	target = np.zeros(total_pairs, dtype=np.int8)
 	folds =  np.array([k for (k, n) in enumerate(fold_lengths) for j in range(n)])
 
@@ -112,6 +112,14 @@ def prepare_dataset():
 						data[r, c] = prediction_scores[i, j]
 						if c == 0:
 							target[r] = contact_matrix[i, j] <= 8 if contact_matrix[i, j] > 0 else -1
+
+						if constants.surrounding_prediction_scores:
+							cc = 1
+							for u in range(i-1, i+2):
+								for v in range(j-1, j+2):
+									if u != i or v != j:
+										data[r, cc * len(constants.combined_methods) + c] = prediction_scores[u, v] if (0 <= u < L and 0 <= v < L) else -10
+										cc += 1
 						r += 1
 
 			if constants.extra_features:

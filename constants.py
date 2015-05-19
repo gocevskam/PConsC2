@@ -15,6 +15,7 @@ secondary_structures = 'CEH'
 number_of_folds = 5
 
 min_separation = 5
+surrounding_prediction_scores = False
 extra_features = True
 extra_features_window = 4
 extra_same_ss_features = True
