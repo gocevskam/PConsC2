@@ -33,7 +33,7 @@ def add_extra_features(data, sequence_name, L, row, column):
 				for (amino_acid, background_frequency) in zip(constants.amino_acids, constants.background_frequencies):
 					data[r, c] = math.log((frequencies[k][amino_acid] if amino_acid in frequencies[k] else 0.01) / (len(alignment) * background_frequency))
 					c += 1
-				data[r, c] = math.log(frequencies[k]['-'] if '-' in frequencies[k] else 0.01)
+				data[r, c] = math.log(frequencies[k]['-'] if '-' in frequencies[k] else 0.01) / float(len(alignment))
 				c += 1
 
 			# SS
