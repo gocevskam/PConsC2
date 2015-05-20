@@ -6,17 +6,45 @@ import matplotlib.pyplot as plt
 import cPickle as pickle
 import itertools
 
-grouped_methods = [
-	('psicov', (constants.data_path, [a + '_' + 'psicov' for a in constants.alignments], 'PSICOV', 'k:')),
-	('plmdca', (constants.data_path, [a + '_' + 'plmdca' for a in constants.alignments], 'plmDCA', 'g--')),
-	('pconsc', (constants.results_path, ['pconsc'], 'PconsC', 'r-')),
-	('pconsc2_layer_0', (constants.results_path, ['pconsc2_layer_0'], 'PconsC2 Layer 0', '#CCE0FF')),
-	('pconsc2_layer_1', (constants.results_path, ['pconsc2_layer_1'], 'PconsC2 Layer 1', '#99C2FF')),
-	('pconsc2_layer_2', (constants.results_path, ['pconsc2_layer_2'], 'PconsC2 Layer 2', '#80B2FF')),
-	('pconsc2_layer_3', (constants.results_path, ['pconsc2_layer_3'], 'PconsC2 Layer 3', '#66A3FF')),
-	('pconsc2_layer_4', (constants.results_path, ['pconsc2_layer_4'], 'PconsC2 Layer 4', '#3385FF')),
-	('pconsc2_layer_5', (constants.results_path, ['pconsc2_layer_5'], 'PconsC2 Layer 5', '#005CE6')),
+grouped_methods_layers = [
+	('psicov', (constants.data_path, [a + '_' + 'psicov' for a in constants.alignments], 'PSICOV', 'k')),
+	('plmdca', (constants.data_path, [a + '_' + 'plmdca' for a in constants.alignments], 'plmDCA', 'g')),
+	('pconsc', (constants.results_path, ['no_extra/pconsc2_layer_0'], 'PconsC', 'r')),
+	('pconsc2_layer_1', (constants.results_path, ['no_extra/pconsc2_layer_1'], 'Layer 1', '#99C2FF')),
+	('pconsc2_layer_2', (constants.results_path, ['no_extra/pconsc2_layer_2'], 'Layer 2', '#80B2FF')),
+	('pconsc2_layer_3', (constants.results_path, ['no_extra/pconsc2_layer_3'], 'Layer 3', '#66A3FF')),
+	('pconsc2_layer_4', (constants.results_path, ['no_extra/pconsc2_layer_4'], 'Layer 4', '#3385FF')),
+	('pconsc2_layer_5', (constants.results_path, ['no_extra/pconsc2_layer_5'], 'PconsC2', '#005CE6')),
 ]
+
+grouped_methods_extra = [
+	('psicov', (constants.data_path, [a + '_' + 'psicov' for a in constants.alignments], 'PSICOV', 'k')),
+	('plmdca', (constants.data_path, [a + '_' + 'plmdca' for a in constants.alignments], 'plmDCA', 'g')),
+	('pconsc', (constants.results_path, ['no_extra/pconsc2_layer_0'], 'PconsC', 'r')),
+	('pconsc2_layer_5', (constants.results_path, ['no_extra/pconsc2_layer_5'], 'PconsC2', '#005CE6')),
+	('pconsc_extra', (constants.results_path, ['extra/pconsc2_layer_0'], 'PconsC (extra features)', 'orange')),
+	('pconsc2_layer_5_extra', (constants.results_path, ['extra/pconsc2_layer_5'], 'PconsC2 (extra features)', '#9966FF')),
+]
+
+grouped_methods_ss = [
+	('psicov', (constants.data_path, [a + '_' + 'psicov' for a in constants.alignments], 'PSICOV', 'k')),
+	('plmdca', (constants.data_path, [a + '_' + 'plmdca' for a in constants.alignments], 'plmDCA', 'g')),
+	('pconsc', (constants.results_path, ['no_extra/pconsc2_layer_0'], 'PconsC', 'r')),
+	('pconsc2_layer_5', (constants.results_path, ['no_extra/pconsc2_layer_5'], 'PconsC2', '#005CE6')),
+	('pconsc_ss', (constants.results_path, ['no_extra_same_ss/pconsc2_layer_0'], 'PconsC (SS features)', '#993300')),
+	('pconsc2_layer_5_ss', (constants.results_path, ['no_extra_same_ss/pconsc2_layer_5'], 'PconsC2 (SS features)', '#009999')),
+]
+
+grouped_methods_surrounding = [
+	('psicov', (constants.data_path, [a + '_' + 'psicov' for a in constants.alignments], 'PSICOV', 'k')),
+	('plmdca', (constants.data_path, [a + '_' + 'plmdca' for a in constants.alignments], 'plmDCA', 'g')),
+	('pconsc', (constants.results_path, ['no_extra/pconsc2_layer_0'], 'PconsC', 'r')),
+	('pconsc2_layer_5', (constants.results_path, ['no_extra/pconsc2_layer_5'], 'PconsC2', '#005CE6')),
+	('pconsc_surrounding', (constants.results_path, ['surrounding/pconsc2_layer_0'], 'PconsC (surrounding scores)', '#993300')),
+	('pconsc2_layer_5_surrounding', (constants.results_path, ['surrounding/pconsc2_layer_5'], 'PconsC2 (surrounding scores)', '#009999')),
+]
+
+grouped_methods = grouped_methods_layers
 
 def average_ppv(method):
 	top_predictions_fraction = 1.0
@@ -84,7 +112,7 @@ def plot_ppv():
 		for (grouped_method, (base_path, methods, name, style)) in grouped_methods:
 			X, Y = ppv[grouped_method]
 			plt.plot(X, Y, style, label=name)
-		plt.legend()
+		plt.legend(ncol=2)
 		plt.xlabel('Maximum relative rank of contacts (%)')
 		plt.ylabel('PPV')
 		plt.show()

@@ -1,3 +1,4 @@
+import constants
 import data_io
 
 import numpy as np
@@ -44,27 +45,26 @@ def plot(contacts, predictions=None, output_prefix=None):
 	if not output_prefix:
 		plt.show()
 
-def plot_file(data_path, sequence_name, prediction_method=None, prediction_fraction=1.0, output_prefix=None):
-	sequence = data_io.read_sequence(data_path, sequence_name)
+def plot_file(sequence_name, prediction_method=None, prediction_fraction=1.0, output_prefix=None):
+	sequence = data_io.read_sequence(constants.data_path, sequence_name)
 	L = len(sequence)
-	contacts = data_io.read_contacts_matrix(data_path, sequence_name, L)
+	contacts = data_io.read_contacts_matrix(constants.data_path, sequence_name, L)
 	predictions = None
 
 	if prediction_method:
-		predictions, prediction_scores = data_io.read_predicted_contacts(data_path, prediction_method, sequence_name, L, 5)
+		predictions, prediction_scores = data_io.read_predicted_contacts(constants.results_path, prediction_method, sequence_name, L, constants.min_separation)
 		predictions = predictions[:int(prediction_fraction * L)]
 
 	plot(contacts, predictions, output_prefix)
 
 if __name__ == "__main__":
-	if len(sys.argv) < 3:
-		print "Not enough arguments. Enter the path to the protein data and the sequence name."
+	if len(sys.argv) < 2:
+		print "Not enough arguments. Enter the path the sequence name."
 	else:
-		data_path = sys.argv[1]
-		sequence_name = sys.argv[2]
-		output_prefix = sys.argv[3] if len(sys.argv) > 3 else None
+		sequence_name = sys.argv[1]
+		output_prefix = sys.argv[2] if len(sys.argv) > 2 else None
 
-		prediction_method = sys.argv[4] if len(sys.argv) > 4 else None
-		prediction_fraction = float(sys.argv[5]) if len(sys.argv) > 5 else 1.0
+		prediction_method = sys.argv[3] if len(sys.argv) > 3 else None
+		prediction_fraction = float(sys.argv[4]) if len(sys.argv) > 4 else 1.0
 		
-		plot_file(data_path, sequence_name, prediction_method, prediction_fraction, output_prefix)
+		plot_file(sequence_name, prediction_method, prediction_fraction, output_prefix)
