@@ -85,6 +85,8 @@ def plot_ppv():
 			X, Y = ppv[grouped_method]
 			plt.plot(X, Y, style, label=name)
 		plt.legend()
+		plt.xlabel('Maximum relative rank of contacts (%)')
+		plt.ylabel('PPV')
 		plt.show()
 
 	predictions = get_all_predictions()
