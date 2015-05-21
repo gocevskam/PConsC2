@@ -39,8 +39,10 @@ grouped_methods_surrounding = [
 	('psicov', (constants.data_path, [a + '_' + 'psicov' for a in constants.alignments], 'PSICOV', 'k')),
 	('plmdca', (constants.data_path, [a + '_' + 'plmdca' for a in constants.alignments], 'plmDCA', 'g')),
 	('pconsc', (constants.results_path, ['no_extra/pconsc2_layer_0'], 'PconsC', 'r')),
+	('pconsc2_layer_1', (constants.results_path, ['no_extra/pconsc2_layer_1'], 'Layer 1', '#99C2FF')),
 	('pconsc2_layer_5', (constants.results_path, ['no_extra/pconsc2_layer_5'], 'PconsC2', '#005CE6')),
 	('pconsc_surrounding', (constants.results_path, ['surrounding/pconsc2_layer_0'], 'PconsC (surrounding scores)', '#993300')),
+	('pconsc2_layer_1_surrounding', (constants.results_path, ['surrounding/pconsc2_layer_1'], 'Layer 1 (surrounding scores)', '#99D6D6')),
 	('pconsc2_layer_5_surrounding', (constants.results_path, ['surrounding/pconsc2_layer_5'], 'PconsC2 (surrounding scores)', '#009999')),
 ]
 
@@ -54,7 +56,7 @@ def average_ppv(method):
 	for sequence_name in sequence_names:
 		L = len(data_io.read_sequence(constants.data_path, sequence_name))
 		contact_matrix = data_io.read_contacts_matrix(constants.data_path, sequence_name, L)
-		predictions, prediction_scores = data_io.read_predicted_contacts(constants.data_path, method, sequence_name, L, 5)
+		predictions, prediction_scores = data_io.read_predicted_contacts(constants.results_path, method, sequence_name, L, 5)
 		predictions = [(i, j) for (i, j) in predictions if contact_matrix[i-1,j-1] > 0]
 		predictions = predictions[:int(top_predictions_fraction * L)]
 		if len(predictions) > 0:
@@ -65,7 +67,7 @@ def average_ppv(method):
 	print 'Average PPV:', sum(ppv) / len(ppv)
 
 def plot_ppv():
-	max_predictions_fraction = 1.5
+	max_predictions_fraction = 2.0
 
 	def get_all_predictions():
 		sequence_names = data_io.read_sequence_names(constants.data_path)
@@ -115,12 +117,17 @@ def plot_ppv():
 		plt.legend(ncol=2)
 		plt.xlabel('Maximum relative rank of contacts (%)')
 		plt.ylabel('PPV')
+		plt.xlim([0, 100 * max_predictions_fraction])
 		plt.show()
 
 	predictions = get_all_predictions()
 	ppv = accumulate_predictions(predictions)
+
+	for (grouped_method, (base_path, methods, name, style)) in grouped_methods:
+		print name, next(y for (x, y) in zip(*ppv[grouped_method]) if x >= 100)
+
 	plot_ppv_curves(ppv)
 
 if __name__ == "__main__":
-	#average_ppv('hhblits_1_psicov')
+	#average_ppv('no_extra/pconsc2_layer_0')
 	plot_ppv()
