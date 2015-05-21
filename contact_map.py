@@ -10,18 +10,6 @@ import sys
 def plot(contacts, predictions=None, output_prefix=None):
 	L = len(contacts)
 
-	plt.figure(figsize=(7.5, 6))
-	X, Y = np.meshgrid(np.arange(L+1)+0.5, np.arange(L+1)+0.5)
-	plt.pcolor(X, Y, contacts, vmin=0, vmax=32)
-	plt.xlim(0.5, L + 0.5)
-	plt.ylim(0.5, L + 0.5)
-	plt.xlabel('Residue number')
-	plt.ylabel('Residue number')
-	plt.colorbar()
-
-	if output_prefix:
-		plt.savefig(output_prefix + '_dist.png')
-
 	contact_map = np.zeros_like(contacts) + np.logical_and(0 < contacts, contacts <= 8)
 	if predictions:
 		for (i, j) in predictions:
@@ -32,8 +20,11 @@ def plot(contacts, predictions=None, output_prefix=None):
 			 	contact_map[i-1, j-1] = 3
 			 	contact_map[j-1, i-1] = 3
 
-	plt.figure(figsize=(6, 6))
-	plt.pcolor(X, Y, contact_map, cmap=colors.ListedColormap(['1.0', '0.2', 'g', 'r']), vmin=0, vmax=3)
+	plt.figure(figsize=(7.5, 6))
+	X, Y = np.meshgrid(np.arange(L+1)+0.5, np.arange(L+1)+0.5)
+	plt.pcolor(X, Y, np.ma.array(contacts, mask=~np.tri(L, k=0, dtype='bool')), vmin=0, vmax=32)
+	plt.colorbar()
+	plt.pcolor(X, Y, np.ma.array(contact_map, mask=np.tri(L, k=0, dtype='bool')), cmap=colors.ListedColormap(['1.0', '0.2', 'g', 'r']), vmin=0, vmax=3)
 	plt.xlim(0.5, L + 0.5)
 	plt.ylim(0.5, L + 0.5)
 	plt.xlabel('Residue number')
