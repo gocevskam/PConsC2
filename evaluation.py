@@ -23,7 +23,7 @@ grouped_methods_extra = [
 	('pconsc', (constants.results_path, ['no_extra/pconsc2_layer_0'], 'PconsC', 'r')),
 	('pconsc2_layer_5', (constants.results_path, ['no_extra/pconsc2_layer_5'], 'PconsC2', '#005CE6')),
 	('pconsc_extra', (constants.results_path, ['extra/pconsc2_layer_0'], 'PconsC (extra features)', 'orange')),
-	('pconsc2_layer_5_extra', (constants.results_path, ['extra/pconsc2_layer_5'], 'PconsC2 (extra features)', '#9966FF')),
+	('pconsc2_layer_5_extra', (constants.results_path, ['extra/pconsc2_layer_5'], 'PconsC2 (extra features)', '#B693D9')),
 ]
 
 grouped_methods_ss = [
